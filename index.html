@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lucky Draw</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(45deg, rgba(138, 43, 226, 0.8), rgba(0, 191, 255, 0.8));
+      overflow: hidden;
+      text-align: center;
+      position: relative;
+      color: #fff;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.5), 0 0 30px rgba(255, 255, 255, 0.3);
+    }
+
+    .result {
+      font-size: 1.8em;
+      font-weight: bold;
+      margin-top: 20px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .prize {
+      font-size: 1.8em;
+      color: #FFD700;
+    }
+
+    .loser {
+      color: #FF6347;
+    }
+
+    button {
+      background-color: #FF6F61;
+      border: none;
+      padding: 15px 30px;
+      color: white;
+      font-size: 1.4em;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 0 20px rgba(255, 111, 97, 0.6);
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #FF4500;
+      transform: scale(1.1);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .perfume {
+      position: absolute;
+      width: 80px;
+      animation: float 5s infinite ease-in-out;
+    }
+
+    .perfume:nth-child(1) {
+      top: 20%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    .perfume:nth-child(2) {
+      top: 40%;
+      right: 15%;
+      animation-delay: 2s;
+    }
+
+    .perfume:nth-child(3) {
+      bottom: 20%;
+      left: 25%;
+      animation-delay: 1s;
+    }
+
+    .perfume:nth-child(4) {
+      bottom: 10%;
+      right: 5%;
+      animation-delay: 3s;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); opacity: 0.8; }
+      50% { transform: translateY(-20px); opacity: 1; }
+      100% { transform: translateY(0); opacity: 0.8; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✨ Welcome to the Lucky Draw! ✨</h1>
+    <p>Give it a try and see if you're the next lucky winner!</p>
+    <button id="drawButton" onclick="startDraw()">🎉 Try Your Luck! 🎉</button>
+    <div class="result" id="result"></div>
+    <canvas class="fireworks" id="fireworks"></canvas>
+  </div>
+
+  <!-- Floating perfume bottles -->
+  <img src="https://via.placeholder.com/80/FF69B4?text=Rain" alt="Perfume 1" class="perfume">
+  <img src="https://via.placeholder.com/80/8A2BE2?text=Black+Opium" alt="Perfume 2" class="perfume">
+  <img src="https://via.placeholder.com/80/FF4500?text=Rose" alt="Perfume 3" class="perfume">
+  <img src="https://via.placeholder.com/80/FFD700?text=Perfume" alt="Perfume 4" class="perfume">
+
+  <script>
+    let winners = 0; // Counter for total winners
+    const prizes = [
+      { name: "Rain", rank: "1st" },
+      { name: "Black Opium", rank: "2nd" },
+      { name: "Rose", rank: "3rd" },
+    ];
+
+    if (sessionStorage.getItem("alreadyClicked")) {
+      document.getElementById("drawButton").disabled = true;
+      document.getElementById("drawButton").style.backgroundColor = "#ccc"; // Disabled button color
+      document.getElementById("result").innerHTML = "You already participated! Refreshing won't work 😅";
+    }
+
+    function startDraw() {
+      const resultElement = document.getElementById("result");
+      const button = document.getElementById("drawButton");
+
+      // Disable the button after the first click
+      button.disabled = true;
+      button.style.backgroundColor = "#ccc";
+
+      // Store that the user has clicked in sessionStorage
+      sessionStorage.setItem("alreadyClicked", true);
+
+      if (winners < 3) { // Check if there are still prizes left
+        const isWinner = Math.random() < 0.33; // 33% chance of winning for each person
+
+        if (isWinner && winners < 3) {
+          const prize = prizes[winners]; // Assign prize based on the current winner count
+          resultElement.innerHTML = `🎉 Congratulations! You're the ${prize.rank} winner and won "${prize.name}"! 🎉`;
+          resultElement.classList.add("prize");
+          winners++;
+        } else {
+          resultElement.textContent = "😢 Sorry, better luck next time!";
+          resultElement.classList.add("loser");
+        }
+      } else {
+        resultElement.innerHTML = "🎉 All 3 prizes have been claimed! 🎊";
+        resultElement.classList.remove("loser");
+        resultElement.classList.add("prize");
+      }
+
+      // Fade the result in
+      resultElement.style.opacity = 1;
+    }
+  </script>
+</body>
+</html>
